@@ -1,5 +1,3 @@
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 import java.util.ArrayList;
 
 /**
@@ -8,7 +6,7 @@ import java.util.ArrayList;
 public class Collisions {
     private ArrayList<Line> collidedLines = new ArrayList<>();
     private ArrayList<Boolean> collisionType = new ArrayList<>();//Corner or surface
-    private ArrayList<Boolean> collisionLinesDuplicates = new ArrayList<>();//2 states: true the same collision registered, false brand new collision with the corresponding line
+    private ArrayList<Integer> collisionLinesDuplicateCount = new ArrayList<>();//2 states: true the same collision registered, false brand new collision with the corresponding line
     private ArrayList<Boolean> collisionUpdated = new ArrayList<>();//2 states: true updated, false not updated i.e. collision expired
     private Ball ball;
     private double D = 0.9;
@@ -25,12 +23,12 @@ public class Collisions {
     public void add(Line line, Boolean type){
         int duplicateIndex = indexOf(line);
         if(duplicateIndex > -1){//This collision has already been registered
-            collisionLinesDuplicates.set(duplicateIndex, true);
+            collisionLinesDuplicateCount.set(duplicateIndex, collisionLinesDuplicateCount.get(duplicateIndex) + 1);
             collisionUpdated.set(duplicateIndex, true);
             return;
         }
         else {
-            collisionLinesDuplicates.add(false);
+            collisionLinesDuplicateCount.add(0);
             collisionUpdated.add(true);
         }
         collidedLines.add(line);
@@ -40,7 +38,7 @@ public class Collisions {
     public void remove(int i) {
         collisionType.remove(i);
         collidedLines.remove(i);
-        collisionLinesDuplicates.remove(i);
+        collisionLinesDuplicateCount.remove(i);
         collisionUpdated.remove(i);
     }
 
@@ -61,8 +59,8 @@ public class Collisions {
                 continue;
             }
             collisionUpdated.set(i, false);//Reset all updated collisions
-
-            if(collisionLinesDuplicates.get(i)) {
+            System.out.println(collisionLinesDuplicateCount.get(i) % 4);
+            if(collisionLinesDuplicateCount.get(i) % 2 != 0) {
                 continue;
             }
 
@@ -83,9 +81,6 @@ public class Collisions {
         }
 
         finalMagnitude = currentVelocity.magnitude();//Last line magnitude (magnitudes of all lines should be the same)
-        if(finalMagnitude > ball.getDiameter()-2) {
-            finalMagnitude = ball.getDiameter()-2;
-        }
         Vector2D finalVelocity = new Vector2D();
         finalVelocity.Vector2DFromAngle(angleSum / averageCollsionCount, finalMagnitude);
 
