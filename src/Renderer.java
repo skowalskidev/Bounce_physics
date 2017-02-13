@@ -7,13 +7,13 @@ import java.util.TimerTask;
 import javax.swing.JFrame;
 
 public class Renderer extends JFrame {
-    private int DELAY = 30;
+    private int DELAY = 90;
     private double G = 0.2;
 
     private Collisions collisions;
 
     private ArrayList<Line> lines = new ArrayList<>();
-    private Ball ball = new Ball(270, 550, 10, -28, 28);
+    private Ball ball = new Ball(270, 550, 10, 0, 15);
 
     public Renderer() {
         collisions = new Collisions(ball);
@@ -66,6 +66,24 @@ public class Renderer extends JFrame {
             double ballAngle2 = ballVector2.angle();
             double ballAngleToLinePerpendicular2 = (lineAngle - Math.PI / 2) - ballAngle2;
 
+            int x1 = ball.getX();
+            int y1 = ball.getY();
+
+            int x2 = ball.getX() + (int) ball.getVelocity().getdX();
+            int y2 = ball.getY() + (int) ball.getVelocity().getdY();
+
+            int x3 = line.getX1();
+            int y3 = line.getY1();
+            int x4 = line.getX2();
+            int y4 = line.getY2();
+
+            int divisor = ( (x1 - x2)*(y3 - y4) - (y1 - y2)*(x3 -x4));
+            if(divisor > 0) {
+                int ix = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x3)) / divisor;
+                int iy = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x3)) / divisor;
+
+                g2.draw(new Ellipse2D.Double(ix, iy, ball.getDiameter() * 0.5, ball.getDiameter() * 0.5));
+            }
             if (line.getY1() < line.getY2()) {
                 //Colliding at the first corner
                 if (ballAngleToLinePerpendicular < -Math.PI || ballAngleToLinePerpendicular > 0) {
