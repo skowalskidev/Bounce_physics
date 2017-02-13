@@ -6,21 +6,19 @@ public class Ball {
     private int y;
     private int radius;
     private int diameter;
-    private double velocityX;
-    private double velocityY;
-    private Line lastCollidedWith;
+    private Vector2D velocity;
 
 
-    public Ball(int x, int y, int radius, double velocityX, double velocityY){
+    public Ball(int x, int y, int radius, double velocityX, double velocityY) {
         setX(x);
         setY(y);
         setRadius(radius);
-        setVelocity(velocityX, velocityY);
+        velocity = new Vector2D(velocityX, velocityY);
     }
 
     public void update() {
-        setX(x += velocityX);
-        setY(y += velocityY);
+        setX(x += velocity.getdX());
+        setY(y += velocity.getdY());
     }
 
     public int getX() {
@@ -39,17 +37,21 @@ public class Ball {
         this.y = y;
     }
 
-    public double getVelocityX() {
-        return velocityX;
+    public Vector2D getVelocity() {
+        return velocity;
     }
 
     public void setVelocity(double velocityX, double velocityY) {
-        this.velocityX = velocityX;
-        this.velocityY = velocityY;
+        velocity.set(velocityX, velocityY);
     }
 
-    public double getVelocityY() {
-        return velocityY;
+    public void applyGravity(double G) {
+        double newVelocityY = getVelocity().getdY() + G;
+        getVelocity().setdY(newVelocityY);
+    }
+
+    public void applyDampening(double D) {
+        setVelocity(velocity.getdX() * D, velocity.getdY() * D);
     }
 
     public int getRadius() {
@@ -63,13 +65,5 @@ public class Ball {
 
     public int getDiameter() {
         return diameter;
-    }
-
-    public Line getLastCollidedWith() {
-        return lastCollidedWith;
-    }
-
-    public void setLastCollidedWith(Line lastCollidedWith) {
-        this.lastCollidedWith = lastCollidedWith;
     }
 }

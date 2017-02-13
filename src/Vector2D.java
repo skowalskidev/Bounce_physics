@@ -10,9 +10,29 @@
 import java.lang.Math;
 
 public class Vector2D {
+    private double dX;
+    private double dY;
 
-    protected double dX;
-    protected double dY;
+    public double getdX() {
+        return dX;
+    }
+
+    public void setdX(double dX) {
+        this.dX = dX;
+    }
+
+    public double getdY() {
+        return dY;
+    }
+
+    public void setdY(double dY) {
+        this.dY = dY;
+    }
+
+    public void set(double dX, double dY){
+        setdX(dX);
+        setdY(dY);
+    }
 
     // Constructor methods ....
 
