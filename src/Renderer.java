@@ -10,8 +10,6 @@ public class Renderer extends JFrame {
     private int DELAY = 30;
     private double G = 0.2;
 
-        private IsKeyPressed isKeyPressed;
-
     private Collisions collisions;
 
     private ArrayList<Line> lines = new ArrayList<>();
@@ -19,7 +17,6 @@ public class Renderer extends JFrame {
 
     public Renderer() {
         collisions = new Collisions(ball);
-        isKeyPressed = new IsKeyPressed();
         drawLine(50, 50, 650, 50);
         drawLine(650, 50, 650, 650);
         drawLine(650, 650, 50, 650);
@@ -122,11 +119,6 @@ public class Renderer extends JFrame {
                 collisions.update();
                 ball.applyGravity(G);
                 ball.update();
-
-                if(isKeyPressed.isWPressed()){
-                    ball.applyDampening(0.90);
-                }
-
             }
         };
         Timer timer = new Timer();
