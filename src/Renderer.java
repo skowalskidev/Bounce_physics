@@ -7,16 +7,19 @@ import java.util.TimerTask;
 import javax.swing.JFrame;
 
 public class Renderer extends JFrame {
-    private int DELAY = 90;
+    private int DELAY = 30;
     private double G = 0.2;
 
     private Collisions collisions;
 
     private ArrayList<Line> lines = new ArrayList<>();
-    private Ball ball = new Ball(270, 550, 10, 0, 15);
+    private Ball ball = new Ball(270, 550, 10, -15, 10);
+
+    public ArrayList<Integer>repositionedBalls = new ArrayList<>();
+    public ArrayList<Integer>linePoints = new ArrayList<>();
 
     public Renderer() {
-        collisions = new Collisions(ball);
+        collisions = new Collisions(ball, this);
         drawLine(50, 50, 650, 50);
         drawLine(650, 50, 650, 650);
         drawLine(650, 650, 50, 650);
@@ -24,6 +27,14 @@ public class Renderer extends JFrame {
         drawLine(100, 650, 150, 600);
         drawLine(150, 600, 200, 600);
         drawLine(200, 600, 250, 650);
+
+        drawLine(250, 650, 300, 600);
+        drawLine(300, 600, 350, 600);
+        drawLine(350, 600, 400, 650);
+
+        drawLine(400, 650, 450, 600);
+        drawLine(450, 600, 500, 600);
+        drawLine(500, 600, 550, 650);
     }
 
     public void drawLine(int x1, int y1, int x2, int y2) {
@@ -42,8 +53,17 @@ public class Renderer extends JFrame {
 
         //ball.setX((int) MouseInfo.getPointerInfo().getLocation().getX());
         //ball.setY((int) MouseInfo.getPointerInfo().getLocation().getY());
-        g2.draw(new Ellipse2D.Double(ball.getX() - ball.getRadius(), ball.getY() - ball.getRadius(), ball.getDiameter(), ball.getDiameter()));
 
+        g2.setColor(Color.red);
+        for(int s = 0; s< repositionedBalls.size(); s+=2){
+           g2.draw(new Ellipse2D.Double(repositionedBalls.get(s) - ball.getRadius(), repositionedBalls.get(s+1) - ball.getRadius(), ball.getDiameter(), ball.getDiameter()));
+        }
+        g2.setColor(Color.pink);
+        for(int s = 0; s< linePoints.size(); s+=2){
+            g2.draw(new Ellipse2D.Double(linePoints.get(s) - ball.getRadius()*0.5, linePoints.get(s+1) - ball.getRadius()*0.5, ball.getRadius(), ball.getRadius()));
+        }
+        g2.setColor(Color.black);
+        g2.draw(new Ellipse2D.Double(ball.getX() - ball.getRadius(), ball.getY() - ball.getRadius(), ball.getDiameter(), ball.getDiameter()));
         for (int i = 0; i < lines.size(); i++) {
             Line line = lines.get(i);
             g2.draw(new Line2D.Double(line.getX1(), line.getY1(), line.getX2(), line.getY2()));
@@ -66,63 +86,47 @@ public class Renderer extends JFrame {
             double ballAngle2 = ballVector2.angle();
             double ballAngleToLinePerpendicular2 = (lineAngle - Math.PI / 2) - ballAngle2;
 
-            int x1 = ball.getX();
-            int y1 = ball.getY();
+            g2.draw(new Line2D.Double(ball.getX(), ball.getY(), ball.getX() + ball.getVelocity().getdX(), ball.getY() + ball.getVelocity().getdY()));
 
-            int x2 = ball.getX() + (int) ball.getVelocity().getdX();
-            int y2 = ball.getY() + (int) ball.getVelocity().getdY();
-
-            int x3 = line.getX1();
-            int y3 = line.getY1();
-            int x4 = line.getX2();
-            int y4 = line.getY2();
-
-            int divisor = ( (x1 - x2)*(y3 - y4) - (y1 - y2)*(x3 -x4));
-            if(divisor > 0) {
-                int ix = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x3)) / divisor;
-                int iy = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x3)) / divisor;
-
-                g2.draw(new Ellipse2D.Double(ix, iy, ball.getDiameter() * 0.5, ball.getDiameter() * 0.5));
-            }
             if (line.getY1() < line.getY2()) {
                 //Colliding at the first corner
                 if (ballAngleToLinePerpendicular < -Math.PI || ballAngleToLinePerpendicular > 0) {
                     if (getPointCollision(ball, line.getX1(), line.getY1())) {
                         collisions.add(line, false);
-                        break;
+                        //break;
                     }
                 }
                 //Colliding at the second corner
                 else if (ballAngleToLinePerpendicular2 < 0 && ballAngleToLinePerpendicular2 > -Math.PI) {
                     if (getPointCollision(ball, line.getX2(), line.getY2())) {
                         collisions.add(line, false);
-                        break;
+                        //break;
                     }
                 }
                 //If ball is between two corners
                 else if (Math.abs(perpDistToLine(ball, line)) <= ball.getRadius()) {
                     collisions.add(line, true);
-                    break;
+                    //break;
                 }
             } else {
                 //Colliding at the first corner
                 if (ballAngleToLinePerpendicular < -Math.PI && ballAngleToLinePerpendicular > -Math.PI * 2) {
                     if (getPointCollision(ball, line.getX1(), line.getY1())) {
                         collisions.add(line, false);
-                        break;
+                        //break;
                     }
                 }
                 //Colliding at the second corner
                 else if (ballAngleToLinePerpendicular2 > -Math.PI || ballAngleToLinePerpendicular2 < -Math.PI * 2) {
                     if (getPointCollision(ball, line.getX2(), line.getY2())) {
                         collisions.add(line, false);
-                        break;
+                        //break;
                     }
                 }
                 //If ball is between two corners
                 else if (Math.abs(perpDistToLine(ball, line)) <= ball.getRadius()) {
                     collisions.add(line, true);
-                    break;
+                    //break;
                 }
             }
         }

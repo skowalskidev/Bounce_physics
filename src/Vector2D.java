@@ -46,8 +46,8 @@ public class Vector2D {
     }
 
     public void Vector2DFromAngle(double angle, double magnitude) {
-        this.dX = Math.cos(angle) * magnitude;
-        this.dY = Math.sin(angle)* magnitude;
+        this.dX = -Math.cos(angle) * magnitude;
+        this.dY = -Math.sin(angle)* magnitude;
     }
 
     // Convert vector to a string ...
@@ -125,5 +125,12 @@ public class Vector2D {
 
     public double angle(Vector2D base) {
         return angle() - base.angle();
+    }
+
+    // Reverse/Flip
+
+    public void flip() {
+        dX = -dX;
+        dY = -dY;
     }
 }
