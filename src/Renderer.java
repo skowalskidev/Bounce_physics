@@ -13,7 +13,7 @@ public class Renderer extends JFrame {
     private Collisions collisions;
 
     private ArrayList<Line> lines = new ArrayList<>();
-    private Ball ball = new Ball(270, 550, 10, -15, 10);
+    private Ball ball = new Ball(402, 635, 10, 4.4112000000000045, 5.904);
 
     public ArrayList<Integer>repositionedBalls = new ArrayList<>();
     public ArrayList<Integer>linePoints = new ArrayList<>();
@@ -139,8 +139,8 @@ public class Renderer extends JFrame {
             public void run() {
                 repaint();
                 collisions.update();
-                ball.applyGravity(G);
                 ball.update();
+                ball.applyGravity(G);
             }
         };
         Timer timer = new Timer();

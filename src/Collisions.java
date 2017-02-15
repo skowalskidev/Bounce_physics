@@ -10,7 +10,7 @@ public class Collisions {
     private ArrayList<Boolean> collisionUpdated = new ArrayList<>(0);//2 states: true updated, false not updated i.e. collision expired
     private Ball ball;
     private Renderer parent;
-    private double D = 0.98;
+    private double D = 0.9;
 
 
     public Collisions(Ball ball, Renderer parent) {
@@ -55,13 +55,13 @@ public class Collisions {
         Line currentLine = null;
         for (int i = 0; i < collidedLines.size(); i++) {
             if (!collisionUpdated.get(i)) {//Expired collision remove it
-                remove(i);
+                /*remove(i);
                 i--;
-                continue;
+                continue;*/
             }
             collisionUpdated.set(i, false);//Reset all updated collisions
             if (collisionLinesDuplicateCount.get(i) > 0) {
-                continue;
+                //continue;
             }
 
             currentLine = collidedLines.get(i);
@@ -73,14 +73,14 @@ public class Collisions {
 
             angleSum += currentVelocity.angle();
             averageCollsionCount++;
+            break;//Don't need multi collisions
         }
         for (int i = 0; i < collidedLines.size(); i++) {
             collisionUpdated.set(i, false);//Reset all updated collisions
+            remove(i);//Dont need to store collisions anymore
         }
 
-        if (currentLine == null) {
-            return;
-        }
+        if(averageCollsionCount < 1)return;
 
         finalMagnitude = currentVelocity.magnitude();//Last line magnitude (magnitudes of all lines should be the same)
         Vector2D finalVelocity = new Vector2D();
@@ -127,7 +127,7 @@ public class Collisions {
 
         double linePerpAngle = Math.abs(lineVector.angle() - Math.PI / 2);
         Vector2D bumpVector = new Vector2D();
-        bumpVector.Vector2DFromAngle(linePerpAngle, ball.getRadius());
+        bumpVector.Vector2DFromAngle(linePerpAngle, ball.getRadius() + 2);
         bumpVector.setdX(-bumpVector.getdX());
 
         Vector2D finalPosVector = lineParallelPointVector.add(bumpVector);//Relative to line x1 & y1
